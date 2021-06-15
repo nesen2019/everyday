@@ -1,10 +1,51 @@
 import ast
 import json
 import os
+import glob
+import sys
 import requests
 import inspect
 from clecode.configs import cfg
 from requests_toolbelt import MultipartEncoder
+
+
+def load_module(file_path, module_name=None):
+    """
+    Load a module by name and search path
+
+    This function should work with python 2.7 and 3.x
+
+    Returns None if Module could not be loaded.
+    """
+    if module_name is None:
+        module_name = os.path.basename(os.path.splitext(file_path)[0])
+    if sys.version_info >= (3, 5,):
+        import importlib.util
+
+        spec = importlib.util.spec_from_file_location(module_name, file_path)
+        if not spec:
+            return
+
+        module = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(module)
+
+        return module
+    else:
+        import imp
+        mod = imp.load_source(module_name, file_path)
+        return mod
+
+
+
+def auto_module_by_py_dir(py_dir):
+    func_dir, func_basename = os.path.split(py_dir)
+    import_basename = func_basename.strip().split("_v")[0]
+    import_dir = glob.glob(os.path.join(func_dir, "../../../**", f"{import_basename}.py"), recursive=True)
+    assert len(import_dir) == 1
+    import_dir = import_dir[0]
+    module = load_module(import_dir)
+    return module
+
 
 
 def decorator_default(method_name, class_name="Solution"):
@@ -32,9 +73,14 @@ def decorator_default(method_name, class_name="Solution"):
                 new_args.append(new_kws[b])
                 new_kws.pop(b)
 
+            if "_v" in os.path.basename(func.__code__.co_filename):
+                module = auto_module_by_py_dir(func.__code__.co_filename)
+                return getattr(module, "ctest")(*new_args, **new_kws)
+
             return func(*new_args, **new_kws)
 
         return decorated
+
     return decorator
 
 
