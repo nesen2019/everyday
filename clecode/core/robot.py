@@ -129,6 +129,10 @@ class RobotClecode(object):
             self.load_df()
 
     @staticmethod
+    def get_basename_by_question_id(question_id, ext=".py"):
+        return f"L{question_id:08}{ext}"
+
+    @staticmethod
     def get_problems(*args, **kws):
         return get_problems(*args, **kws)
 
@@ -173,7 +177,14 @@ class RobotClecode(object):
         assert len(rows) == 1
         row = rows.iloc[0]
         one = OneSeriesPy(row)
-        one.dump(f)
+        return one.dump(f)
+
+    def create_py_by_question_id(self, id, f=None):
+        rows = self.all_df.loc[self.all_df.question_id == int(id)]
+        assert len(rows) == 1
+        row = rows.iloc[0]
+        one = OneSeriesPy(row)
+        return one.dump(f)
 
     def create_md_base_slugs(self, slugs, f=None):
         slugs_df = list()
@@ -186,11 +197,11 @@ class RobotClecode(object):
         one.dump(f)
 
     @staticmethod
-    def add_new_py():
+    def add_new_py(timedelta=1):
         robot = RobotClecode()
         df = robot.all_df.sort_values("frequency", ascending=False)
 
-        timeday = datetime.datetime.today()
+        timeday = datetime.datetime.today() + datetime.timedelta(days=timedelta)
         path_dir = os.path.join(
             cfg.PATH_CTASKS,
             "year_" + timeday.strftime("%Y"),
@@ -198,12 +209,15 @@ class RobotClecode(object):
             "day_" + timeday.strftime("%Y%m%d"),
         )
         os.makedirs(path_dir, exist_ok=True, )
+        if not os.path.exists(os.path.join(path_dir, "__init__.py")):
+            with open(os.path.join(path_dir, "__init__.py"), "w") as f:
+                f.write("\n")
 
         has_exists_basename_list = glob.glob(os.path.join(cfg.PATH_CTASKS, "**/*.py"), recursive=True)
         has_exists_basename_list = [os.path.basename(path) for path in has_exists_basename_list]
 
         for i in range(len(df)):
-            new_basename = f"L{df.iloc[i].question_id:08}.py"
+            new_basename = RobotClecode.get_basename_by_question_id(df.iloc[i].question_id)
             if new_basename in has_exists_basename_list:
                 continue
             one = OneSeriesPy(df.iloc[i])
