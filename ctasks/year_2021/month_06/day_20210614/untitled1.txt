@@ -1,0 +1,6 @@
+fix
+
+- [x] 解决add_new_py函数， 增加 新建文件的时间 默认是明天的文件  
+- [x] 修改decorator_default函数， 是的创建的L00000001_v1的复习文件能够直接执行检查错误  
+- [x] 增加根据question_id 新建py文件
+
