@@ -49,11 +49,27 @@ from clecode import decorator_default
 
 
 @decorator_default("")
-def ctest(method_name, class_name):  
+def ctest(method_name, class_name):
     return f"""
     
-    >>> 
-    >>> res = {class_name}().{method_name}()
+    >>> l1 = HandleLink([2,4,3]).data_root
+    >>> l2 = HandleLink([5,6,4]).data_root
+    >>> res = {class_name}().{method_name}(l1, l2)
+    >>> HandleLink(res).data_list
+    [7, 0, 8]
+
+    >>> l1 = HandleLink([0]).data_root
+    >>> l2 = HandleLink([0]).data_root
+    >>> res = {class_name}().{method_name}(l1, l2)
+    >>> HandleLink(res).data_list
+    [0]
+
+    >>> l1 = HandleLink([9,9,9,9,9,9,9]).data_root
+    >>> l2 = HandleLink([9,9,9,9]).data_root
+    >>> res = {class_name}().{method_name}(l1, l2)
+    >>> HandleLink(res).data_list
+    [8, 9, 9, 9, 0, 0, 0, 1]
+
     """
 
 
@@ -64,10 +80,23 @@ def ctest(method_name, class_name):
 #         self.next = next
 class Solution:
     def addTwoNumbers(self, l1: ListNode, l2: ListNode) -> ListNode:
-        pass
+        head = ListNode(l1.val + l2.val)
+        cur = head
+        while l1.next or l2.next:
+            l1 = l1.next if l1.next else ListNode()
+            l2 = l2.next if l2.next else ListNode()
+            cur.next = ListNode(l1.val + l2.val + cur.val // 10)
+            cur.val = cur.val % 10
+            cur = cur.next
+        if cur.val >= 10:
+            cur.next = ListNode(cur.val // 10)
+            cur.val = cur.val % 10
+        return head
 
 
-if __name__ == "__main__":  
-    import doctest  
-    
+Solution.addTwoNumbers.__doc__ = ctest("addTwoNumbers")
+
+if __name__ == "__main__":
+    import doctest
+
     doctest.testmod()
