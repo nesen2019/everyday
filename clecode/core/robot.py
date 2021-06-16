@@ -180,6 +180,16 @@ class RobotClecode(object):
         return one.dump(f)
 
     def create_py_by_question_id(self, id, f=None):
+        """
+        demo:
+        # >>> robot = RobotClecode()
+        # >>> robot.create_py_by_question_id(id=0, f="L0.py")
+        :param id:
+        :param f:
+        :return:
+        """
+        if isinstance(f, str):
+            assert not glob.glob(os.path.join(cfg.PATH_CTASKS, f"**/{os.path.basename(f)}"), recursive=True)
         rows = self.all_df.loc[self.all_df.question_id == int(id)]
         assert len(rows) == 1
         row = rows.iloc[0]
