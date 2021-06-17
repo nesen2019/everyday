@@ -32,11 +32,24 @@ from clecode import decorator_default
 
 
 @decorator_default("")
-def ctest(method_name, class_name):  
+def ctest(method_name, class_name):
     return f"""
     
-    >>> 
-    >>> res = {class_name}().{method_name}()
+    >>> head = HandleLink([1,2,3,4,5]).data_root
+    >>> res = {class_name}().{method_name}(head)
+    >>> HandleLink(res).data_list
+    [5, 4, 3, 2, 1]
+
+    >>> head = HandleLink([1,2]).data_root
+    >>> res = {class_name}().{method_name}(head)
+    >>> HandleLink(res).data_list
+    [2, 1]
+
+    >>> head = HandleLink([]).data_root
+    >>> res = {class_name}().{method_name}(head)
+    >>> HandleLink(res).data_list
+    []
+
     """
 
 
@@ -48,10 +61,18 @@ def ctest(method_name, class_name):
 
 class Solution:
     def reverseList(self, head: ListNode) -> ListNode:
-        pass
+        pre, cur = None, head
+        while cur:
+            nxt = cur.next
+            cur.next = pre
+            pre = cur
+            cur = nxt
+        return pre
 
 
-if __name__ == "__main__":  
-    import doctest  
-    
+Solution.reverseList.__doc__ = ctest("reverseList")
+
+if __name__ == "__main__":
+    import doctest
+
     doctest.testmod()
