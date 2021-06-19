@@ -46,23 +46,24 @@ def ctest(method_name, class_name):
     >>> nums = [1,2,3]
     >>> res = {class_name}().{method_name}(nums)
     >>> res_true = [[1,2,3],[1,3,2],[2,1,3],[2,3,1],[3,1,2],[3,2,1]]
-    >>> compare.equal_element_in_list(res_true, res)
+    >>> decorator_default.equal_lst_L00000046.equal_element_in_list(res_true, res)
     True
 
     >>> nums = [0, 1]
     >>> res = {class_name}().{method_name}(nums)
     >>> res_true = [[0,1],[1,0]]
-    >>> compare.equal_element_in_list(res_true, res)
+    >>> decorator_default.equal_lst_L00000046.equal_element_in_list(res_true, res)
     True
 
     >>> nums = [1]
     >>> res = {class_name}().{method_name}(nums)
     >>> res_true = [[1]]
-    >>> compare.equal_element_in_list(res_true, res)
+    >>> decorator_default.equal_lst_L00000046.equal_element_in_list(res_true, res)
     True
-
-
     """
+
+
+decorator_default.equal_lst_L00000046 = compare
 
 
 class Solution:

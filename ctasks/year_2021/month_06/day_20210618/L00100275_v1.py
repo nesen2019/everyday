@@ -28,30 +28,41 @@ from clecode import decorator_default
 @decorator_default("")
 def ctest(method_name, class_name):
     return f"""
-    
-    >>> nums = [2, 3, 1, 0, 2, 5, 3]
-    >>> res = {class_name}().{method_name}(nums)
-    >>> res in [2, 3] 
-    True
+
     """
 
 
 class Solution:
     def findRepeatNumber(self, nums: List[int]) -> int:
-        dic = set()
-        for num in nums:
-            if num in dic: return num
-            dic.add(num)
-        return -1
+        nums.sort()
+        for i in range(1, len(nums)):
+            if nums[i] == nums[i - 1]:
+                return nums[i]
 
 
-# 作者：jyd
-# 链接：https://leetcode-cn.com/problems/shu-zu-zhong-zhong-fu-de-shu-zi-lcof/solution/mian-shi-ti-03-shu-zu-zhong-zhong-fu-de-shu-zi-yua/
-# 来源：力扣（LeetCode）
-# 著作权归作者所有。商业转载请联系作者获得授权，非商业转载请注明出处。
 Solution.findRepeatNumber.__doc__ = ctest("findRepeatNumber")
+
+
+class SolutionV1:
+    def findRepeatNumber(self, nums: List[int]) -> int:
+        i = 0
+        len_nums = len(nums)
+        while i < len_nums:
+            if i == nums[i]:
+                i += 1
+                continue
+            if nums[i] == nums[nums[i]]:
+                return nums[i]
+            else:
+                nums[nums[i]], nums[i] = nums[i], nums[nums[i]]
+
+
+SolutionV1.findRepeatNumber.__doc__ = ctest("findRepeatNumber", "SolutionV1")
 
 if __name__ == "__main__":
     import doctest
 
     doctest.testmod()
+
+    # print(SolutionV1().findRepeatNumber([2, 3, 1, 0, 2, 5, 3]))
+    # print(ctest("findRepeatNumber"))

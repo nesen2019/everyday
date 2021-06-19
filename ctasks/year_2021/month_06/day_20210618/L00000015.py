@@ -61,6 +61,17 @@ def ctest(method_name, class_name):
     >>> decorator_default.equal_L00000015(res_true, res)
     True
 
+    >>> res = {class_name}().{method_name}([0, 0, 0, 0])
+    >>> # ctest.__code__
+    >>> decorator_default.equal_L00000015([[0, 0, 0]], res)
+    True
+
+    >>> res = {class_name}().{method_name}([-2,0,0,2,2])
+    >>> # ctest.__code__
+    >>> decorator_default.equal_L00000015([[-2,0,2]], res)
+    True
+
+
     """
 
 
