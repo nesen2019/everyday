@@ -31,20 +31,44 @@ from clecode import decorator_default
 
 
 @decorator_default("")
-def ctest(method_name, class_name):  
+def ctest(method_name, class_name):
     return f"""
-    
-    >>> 
-    >>> res = {class_name}().{method_name}()
+    >>> {class_name}().{method_name}(2)
+    2
+
+    >>> {class_name}().{method_name}(3)
+    3
+
+    >>> {class_name}().{method_name}(4)
+    5
+
+
     """
 
 
 class Solution:
     def climbStairs(self, n: int) -> int:
-        pass
+        if n < 4:
+            return n
+        a, b = 1, 0
+        for _ in range(n):
+            a, b = a + b, a
+        return a
 
 
-if __name__ == "__main__":  
-    import doctest  
-    
+Solution.climbStairs.__doc__ = ctest("climbStairs")
+
+
+class SolutionV1:
+    def climbStairs(self, n: int) -> int:
+        if n < 4:
+            return n
+        return self.climbStairs(n - 1) + self.climbStairs(n - 2)
+
+
+SolutionV1.climbStairs.__doc__ = ctest("climbStairs", "SolutionV1")
+
+if __name__ == "__main__":
+    import doctest
+
     doctest.testmod()
